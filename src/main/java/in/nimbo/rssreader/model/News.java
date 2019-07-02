@@ -1,11 +1,17 @@
 package in.nimbo.rssreader.model;
 
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class News {
     private String title;
     private String description;
     private String newsAgency;
     private long date;
-
 }
