@@ -6,14 +6,14 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.News;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class FeedService {
     public List<News> getFeeds(String rssUrl) {
         ArrayList<News> result = new ArrayList<>();

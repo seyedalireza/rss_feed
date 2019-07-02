@@ -6,6 +6,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.service.DbService;
+import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,10 @@ import java.net.URL;
 @RestController
 public class Api {
     private DbService dbService;
+    private FeedService feedService;
 
     @Autowired
-    public Api(DbService dbService) {
+    public Api(DbService dbService, FeedService feedService) {
         this.dbService = dbService;
     }
 
