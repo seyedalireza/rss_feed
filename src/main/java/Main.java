@@ -23,6 +23,6 @@ public class Main {
 //            } catch (Exception ignored) {}
 //        }
         CrawlerService crawler = new CrawlerService();
-        crawler.getRssListPageLink("https://www.tabnak.ir");
+        System.out.println(crawler.getRssListPageLink("http://www.yjc.ir"));
     }
 }
