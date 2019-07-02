@@ -1,16 +1,62 @@
 package in.nimbo.rssreader.controller;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
+import in.nimbo.rssreader.service.DbService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URL;
 
 @RequestMapping("/api/v1")
 @RestController
 public class Api {
+    private DbService dbService;
 
-    @GetMapping("/hello")
-    public String helloWorld() {
-        return "HelloWorld";
+    @Autowired
+    public Api(DbService dbService) {
+        this.dbService = dbService;
     }
+
+    @PostMapping("/add-feed")
+    public ResponseEntity<String> add(@RequestParam String url) {
+        try {
+            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
+            dbService.addFeedToPostgres(feed);
+        } catch (Exception e) {
+
+        }
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<String> search() {
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
+    @GetMapping("/number-of-duplicate-news")
+    public ResponseEntity<Integer> getNumberOfDuplicateNews() {
+        return new ResponseEntity<Integer>(HttpStatus.OK);
+    }
+
+    @GetMapping("/number-of-newsagents")
+    public ResponseEntity<Integer> getNumberOfNewsAgency() {
+        return new ResponseEntity<Integer>(HttpStatus.OK);
+    }
+
+    @GetMapping("/number-of-news")
+    public ResponseEntity<Integer> getNumberOfNews() {
+        return new ResponseEntity<Integer>(HttpStatus.OK);
+    }
+
+    @GetMapping("/news-in-day")
+    public ResponseEntity<String> getNewsOfDat() {
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
 }
