@@ -1,5 +1,6 @@
 package in.nimbo.rssreader;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -12,8 +13,4 @@ public class RssReaderApplication {
 		SpringApplication.run(RssReaderApplication.class, args);
 	}
 
-	@Bean
-	public Logger getLogger() {
-		return LoggerFactory.getLogger(RssReaderApplication.class);
-	}
 }
