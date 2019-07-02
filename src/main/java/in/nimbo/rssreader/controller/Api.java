@@ -1,11 +1,12 @@
 package in.nimbo.rssreader.controller;
 
 
-import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.DbService;
+import org.slf4j.Logger;
 import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,15 @@ import java.net.URL;
 @RequestMapping("/api/v1")
 @RestController
 public class Api {
+    private Logger logger;
     private DbService dbService;
     private FeedService feedService;
 
     @Autowired
-    public Api(DbService dbService, FeedService feedService) {
+    public Api(DbService dbService, FeedService feedService, Logger logger) {
+        this.logger = logger;
         this.dbService = dbService;
+        this.feedService = feedService;
     }
 
     @PostMapping("/add-feed")
@@ -31,13 +35,14 @@ public class Api {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             dbService.addFeedToPostgres(feed);
         } catch (Exception e) {
-
+            logger.error("Api.add(): ", e);
         }
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @PostMapping("/search")
-    public ResponseEntity<String> search() {
+    public ResponseEntity<String> search(@RequestBody SearchParams params) {
+
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
