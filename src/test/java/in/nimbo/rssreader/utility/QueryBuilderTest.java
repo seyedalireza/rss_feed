@@ -6,13 +6,13 @@ import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class QueryTest {
-    Query query = new Query();
+public class QueryBuilderTest {
+    QueryBuilder queryBuilder = new QueryBuilder();
 
     @Test
     public void testBuildSearchQuery() throws Exception {
         SearchParams build = SearchParams.builder().newsAgency("ag").title("newsTitle").build();
-        String result = query.buildSearchQuery(build);
+        String result = queryBuilder.buildSearchQuery(build);
         Assert.assertEquals("SELECT * FROM news WHERE title='newsTitle' and newsagency='ag' ;", result);
     }
 }

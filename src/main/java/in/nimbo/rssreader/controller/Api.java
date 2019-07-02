@@ -6,6 +6,8 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.DbService;
+import in.nimbo.rssreader.utility.QueryBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +18,11 @@ import java.net.URL;
 
 @RequestMapping("/api/v1")
 @RestController
+@Slf4j
 public class Api {
-    private Logger logger;
     private DbService dbService;
-
     @Autowired
-    public Api(Logger logger, DbService dbService) {
-        this.logger = logger;
+    public Api(DbService dbService) {
         this.dbService = dbService;
     }
 
@@ -32,14 +32,14 @@ public class Api {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             dbService.addFeedToPostgres(feed);
         } catch (Exception e) {
-            logger.error("Api.add(): ", e);
+            log.error("Api.add(): ", e);
         }
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @PostMapping("/search")
     public ResponseEntity<String> search(@RequestBody SearchParams params) {
-
+        dbService.search(params);
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 

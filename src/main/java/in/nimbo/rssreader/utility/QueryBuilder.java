@@ -1,10 +1,14 @@
 package in.nimbo.rssreader.utility;
 
 import in.nimbo.rssreader.model.SearchParams;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 
-public class Query {
+@Service
+@Slf4j
+public class QueryBuilder {
 
     public String buildSearchQuery(SearchParams params) {
         StringBuilder query = new StringBuilder("SELECT * FROM news WHERE ");
