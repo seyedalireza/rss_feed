@@ -5,6 +5,8 @@ import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,8 +20,51 @@ public class CrawlerService {
     public List<String> getRssUrlList(String siteUrl) {
         List<String> result = new ArrayList<>();
 
+        String rssListPageLink = getRssListPageLink(siteUrl);
+
+        try {
+            Document doc = Jsoup.connect(rssListPageLink).get();
+            doc.getElementsByTag("a").forEach(element -> {
+                try {
+                    String href = element.attributes().get("href");
+                    href = getAbsoluteLink(siteUrl, href);
+                    if(!href.toLowerCase().contains("rss"))
+                        return;
+                    URL url = new URL(href);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(1000);
+                    String contentType = connection.getContentType();
+                    if(contentType == null)
+                        return;
+                    if(!contentType.contains("xml") && !contentType.contains("rss"))
+                        return;
+//                    System.out.println('"' + href + '"');
+
+                    result.add(href);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return result;
+    }
+
+    public String getAbsoluteLink(String siteUrl, String href) {
+        String link;
+        Matcher matcher = urlPattern.matcher(href);
+        if(matcher.find())
+            link = href;
+        else {
+            if(siteUrl.endsWith("/") || href.startsWith("/"))
+                link = siteUrl + href;
+            else
+                link = siteUrl + "/" + href;
+        }
+
+        return link;
     }
 
     public String getRssListPageLink(String siteUrl) {
@@ -29,16 +74,7 @@ public class CrawlerService {
             doc.getElementsByTag("a").forEach(element -> {
                 String href = element.attributes().get("href");
                 if(href.contains("rss")) {
-                    Matcher matcher = urlPattern.matcher(href);
-                    if(matcher.find())
-                        link.set(href);
-                    else {
-                        if(siteUrl.endsWith("/") || href.startsWith("/"))
-                            link.set(siteUrl + href);
-                        else
-                            link.set(siteUrl + "/" + href);
-                    }
-
+                    link.set(getAbsoluteLink(siteUrl, href));
                 }
             });
         } catch (IOException e) {

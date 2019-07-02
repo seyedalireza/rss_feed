@@ -23,6 +23,6 @@ public class Main {
 //            } catch (Exception ignored) {}
 //        }
         CrawlerService crawler = new CrawlerService();
-        System.out.println(crawler.getRssListPageLink("http://www.yjc.ir"));
+        crawler.getRssUrlList("http://www.rajanews.com").forEach(System.out::println);
     }
 }
