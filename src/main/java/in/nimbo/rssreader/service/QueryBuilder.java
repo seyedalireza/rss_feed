@@ -8,7 +8,9 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,6 +30,21 @@ public class QueryBuilder {
         return buildLikeQueryFromParameters(connection, params, count);
     }
 
+    public PreparedStatement distictCountQuery(Connection connection, List<String> columnNames, String tableName) throws SQLException {
+        StringBuilder c = new StringBuilder();
+        for (int i = 0; i < columnNames.size(); i++) {
+            c.append("?").append(", ");
+        }
+        String co = c.substring(0, c.length() - 2);
+        String query = "SELECT COUNT(DISTINCT " + co + ") FROM " + tableName + ";";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        for (int i = 0; i < columnNames.size(); i++) {
+            preparedStatement.setString(i+1, columnNames.get(i));
+        }
+        return preparedStatement;
+    }
+
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance) throws SQLException {//todo test this function
         String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
         StringBuilder queryBuilder = new StringBuilder(count);
@@ -44,7 +61,7 @@ public class QueryBuilder {
         }
         queryBuilder = new StringBuilder(queryBuilder.substring(0, queryBuilder.length() - 3) + " VALUES (");
         for (int i = 0; i < map.size(); i++) {
-            if (i == map.size()-1)
+            if (i == map.size() - 1)
                 queryBuilder.append("?);");
             queryBuilder.append("?, ");
         }
