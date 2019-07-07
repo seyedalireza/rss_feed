@@ -8,7 +8,6 @@ import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,9 +44,9 @@ public class Api {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<String> search(@RequestBody SearchParams params) {
-        dbService.search(params);
-        return new ResponseEntity<String>(HttpStatus.OK);
+    public ResponseEntity<List> search(@RequestBody SearchParams params) {
+        List search = dbService.search(params);
+        return new ResponseEntity<List>(search, HttpStatus.OK);
     }
 
     @GetMapping("/number-of-duplicate-news")

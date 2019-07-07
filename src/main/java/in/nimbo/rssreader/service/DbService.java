@@ -8,6 +8,7 @@ import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -22,9 +23,14 @@ import java.util.List;
 @Service
 @Slf4j
 public class DbService {
+    @Value("spring.datasource.url")
     public static final String URL = "jdbc:postgresql://localhost:5432/news";
+    @Value("spring.datasource.username")
     public static final String USER = "postgres";
+    @Value("spring.datasource.password")
     public static final String PASSWORD = "1234";
+
+
     public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\")\n" +
             "VALUES ('%s','%s','%s','%s','%s')";
     private QueryBuilder queryBuilder;
@@ -99,7 +105,7 @@ public class DbService {
                 log.error("DBService.parseResult()", e);
             }
         }
-        return Collections.emptyList();
+        return list;
     }
 
 

@@ -15,9 +15,10 @@ public class QueryBuilder {
         for (Field field : SearchParams.class.getDeclaredFields()) {
             Object value = null;
             try {
+                boolean accessible = field.isAccessible();
                 field.setAccessible(true);
                 value = field.get(params);
-                field.setAccessible(false);
+                field.setAccessible(accessible);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

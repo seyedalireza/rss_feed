@@ -4,6 +4,7 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
+import in.nimbo.rssreader.utility.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +14,10 @@ import java.net.URL;
 public class Main {
 
     public static void main(String[] args) throws IOException, FeedException {
-//        for(int i = 0; i < 1000; i++) {
-//            System.out.println(i);
-//            try {
-//                String url = "https://aftabnews.ir/fa/rss/" + i;
-//                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
-//                DbService dbService = new DbService();
-//                dbService.addFeedToPostgres(feed);
-//            } catch (Exception ignored) {}
-//        }
+        QueryBuilder queryBuilder = new QueryBuilder();
+        DbService dbService = new DbService(queryBuilder);
+
+
         CrawlerService crawler = new CrawlerService();
         crawler.getRssUrlList("http://www.rajanews.com").forEach(System.out::println);
     }
