@@ -30,19 +30,17 @@ public class CrawlerService {
                     href = getAbsoluteLink(siteUrl, href);
                     if(!href.toLowerCase().contains("rss"))
                         return;
-                    URL url = new URL(href);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setConnectTimeout(1000);
-                    String contentType = connection.getContentType();
-                    if(contentType == null)
-                        return;
-                    if(!contentType.contains("xml") && !contentType.contains("rss"))
-                        return;
-//                    System.out.println('"' + href + '"');
+//                    URL url = new URL(href);
+//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                    connection.setConnectTimeout(1000);
+//                    String contentType = connection.getContentType();
+//                    if(contentType == null)
+//                        return;
+//                    if(!contentType.contains("xml") && !contentType.contains("rss"))
+//                        return;
 
                     result.add(href);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
                 }
             });
         } catch (IOException e) {

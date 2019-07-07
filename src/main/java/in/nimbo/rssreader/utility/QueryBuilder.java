@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 public class QueryBuilder {
 
     public String buildSearchQuery(SearchParams params) {
-        StringBuilder query = new StringBuilder("SELECT * FROM news WHERE ");
+        StringBuilder query = new StringBuilder("SELECT * FROM news.news WHERE ");
         for (Field field : SearchParams.class.getDeclaredFields()) {
             Object value = null;
             try {
@@ -23,7 +23,7 @@ public class QueryBuilder {
             }
             if (value != null)
                 query.append(field.getName().toLowerCase()).append("=").append("\'").append(value.toString()).append("\'")
-                        .append(" and ");
+                        .append(" AND ");
         }
         return query.substring(0, query.length() - 4) + ";";
     }

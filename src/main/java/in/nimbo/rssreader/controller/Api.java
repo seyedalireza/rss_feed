@@ -5,8 +5,8 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.SearchParams;
+import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
-import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import in.nimbo.rssreader.service.FeedService;
@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
+import java.util.List;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -23,9 +24,12 @@ import java.net.URL;
 public class Api {
     private DbService dbService;
     private FeedService feedService;
+    private CrawlerService crawler;
+    private Logger logger;
 
     @Autowired
-    public Api(DbService dbService, FeedService feedService) {
+    public Api(DbService dbService, FeedService feedService, CrawlerService crawler) {
+        this.crawler = crawler;
         this.logger = logger;
         this.dbService = dbService;
         this.feedService = feedService;
@@ -68,4 +72,17 @@ public class Api {
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
+    @GetMapping("/crawl")
+    public ResponseEntity<String> crawl(@RequestParam String url) {
+        List<String> rssUrlList = crawler.getRssUrlList(url);
+        for (String rssUrl : rssUrlList) {
+            try {
+                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(rssUrl)));
+                dbService.addFeedToPostgres(feed);
+            } catch (Exception e) {
+                log.error("Api.add(): ", e);
+            }
+        }
+        return new ResponseEntity<String>("site rss added", HttpStatus.OK);
+    }
 }
