@@ -25,12 +25,10 @@ public class Api {
     private DbService dbService;
     private FeedService feedService;
     private CrawlerService crawler;
-    private Logger logger;
 
     @Autowired
     public Api(DbService dbService, FeedService feedService, CrawlerService crawler) {
         this.crawler = crawler;
-        this.logger = logger;
         this.dbService = dbService;
         this.feedService = feedService;
     }
@@ -73,8 +71,8 @@ public class Api {
     }
 
     @GetMapping("/crawl")
-    public ResponseEntity<String> crawl(@RequestParam String url) {
-        List<String> rssUrlList = crawler.getRssUrlList(url);
+    public ResponseEntity<String> crawl(@RequestParam String uri) {
+        List<String> rssUrlList = crawler.getRssUrlList(uri);
         for (String rssUrl : rssUrlList) {
             try {
                 SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(rssUrl)));

@@ -3,6 +3,7 @@ package in.nimbo.rssreader.service;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -64,14 +65,17 @@ public class DbService {
         }
     }
 
-    public void search(SearchParams params) {
+    public List search(SearchParams params) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Statement statement = connection.createStatement();
             String query = queryBuilder.buildSearchQuery(params);
             ResultSet result = statement.executeQuery(query);
+            List resultList = parseResult(result, News.class);
+            return resultList;
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
         }
+        return Collections.emptyList();
     }
 
     public List parseResult(ResultSet resultSet, Class clazz) {
@@ -81,7 +85,7 @@ public class DbService {
                 if (!resultSet.next())
                     break;
                 Object clazzObject = clazz.getConstructor().newInstance();
-                for (Field field : clazz.getFields()) {
+                for (Field field : clazz.getDeclaredFields()) {
                     field.setAccessible(true);
 
                     String name = field.getName();
