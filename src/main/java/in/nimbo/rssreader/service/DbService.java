@@ -40,28 +40,24 @@ public class DbService {
         this.queryBuilder = queryBuilder;
     }
 
-    public void addFeedToPostgres(SyndFeed feed) {
+    public void addFeedToPostgres(List<News> newsList) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Statement statement = connection.createStatement();
-            for (SyndEntry entry : feed.getEntries()) {
+            for (News news : newsList) {
                 try {
-                    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
-                    String strDate = dateFormat.format(entry.getPublishedDate());
-                    String title = entry.getTitle();
-                    SyndContent descriptionObject = entry.getDescription();
-                    String description = "";
-                    if(descriptionObject != null)
-                        description = descriptionObject.getValue();
-                    String newsAgency = feed.getTitle();
-                    if(newsAgency == null) newsAgency = "";
-                    if(title == null) title = "";
-                    String query = String.format(insertQuery,
-                            title,
-                            strDate,
-                            description,
-                            newsAgency,
-                            !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : "");
+                    String title = news.getTitle();
+                    String description = news.getDescription();
+                    if (description == null)
+                        description = "";
+                    String newsAgency = news.getNewsAgency();
+                    if (newsAgency == null) newsAgency = "";
+                    if (title == null) title = "";
+                    String category = news.getCategory(); // !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : ""
+
+                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category);
+
                     statement.executeQuery(query);
+
                 } catch (Exception e) {
                     log.error("DbService.addToPostgres()", e);
                 }
@@ -86,7 +82,7 @@ public class DbService {
 
     public List parseResult(ResultSet resultSet, Class clazz) {
         List list = new ArrayList();
-        while(true) {
+        while (true) {
             try {
                 if (!resultSet.next())
                     break;
@@ -107,7 +103,4 @@ public class DbService {
         }
         return list;
     }
-
-
-
 }

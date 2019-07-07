@@ -23,7 +23,7 @@ public class QueryBuilder {
                 e.printStackTrace();
             }
             if (value != null)
-                query.append(field.getName().toLowerCase()).append("=").append("\'").append(value.toString()).append("\'")
+                query.append(field.getName().toLowerCase()).append(" LIKE ").append("\'%").append(value.toString()).append("%\'")
                         .append(" AND ");
         }
         return query.substring(0, query.length() - 4) + ";";

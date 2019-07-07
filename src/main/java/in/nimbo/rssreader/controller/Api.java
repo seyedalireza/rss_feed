@@ -4,6 +4,7 @@ package in.nimbo.rssreader.controller;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
@@ -35,8 +36,8 @@ public class Api {
     @PostMapping("/add-feed")
     public ResponseEntity<String> add(@RequestParam String url) {
         try {
-            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
-            dbService.addFeedToPostgres(feed);
+            List<News> newsList = feedService.getFeeds(url);
+            dbService.addFeedToPostgres(newsList);
         } catch (Exception e) {
             log.error("Api.add(): ", e);
         }
@@ -74,8 +75,8 @@ public class Api {
         List<String> rssUrlList = crawler.getRssUrlList(uri);
         for (String rssUrl : rssUrlList) {
             try {
-                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(rssUrl)));
-                dbService.addFeedToPostgres(feed);
+                List<News> newsList = feedService.getFeeds(rssUrl);
+                dbService.addFeedToPostgres(newsList);
             } catch (Exception e) {
                 log.error("Api.add(): ", e);
             }

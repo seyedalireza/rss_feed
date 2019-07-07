@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +29,10 @@ public class FeedService {
                 String title = entry.getTitle();
                 String description = entry.getDescription().getValue();
                 String newsAgency = syndFeed.getTitle();
-//                long date = entry.getPublishedDate().getTime();
-                News news = new News(title, description, newsAgency, "");
+                DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+                String strDate = dateFormat.format(entry.getPublishedDate());
+                String category = !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : "";
+                News news = new News(title, description, newsAgency, category, strDate);
                 result.add(news);
             }
         } catch (IOException | FeedException e) {
