@@ -6,6 +6,7 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.News;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class FeedService {
     public List<News> getFeeds(String rssUrl) {
         ArrayList<News> result = new ArrayList<>();
@@ -27,11 +29,10 @@ public class FeedService {
                 String newsAgency = syndFeed.getTitle();
                 long date = entry.getPublishedDate().getTime();
                 News news = new News(title, description, newsAgency, date);
-
                 result.add(news);
             }
         } catch (IOException | FeedException e) {
-            e.printStackTrace();
+            log.error("FeedService.getFeeds{}", e);
         }
         return result;
     }

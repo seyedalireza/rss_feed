@@ -6,6 +6,7 @@ import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -15,9 +16,14 @@ import java.text.SimpleDateFormat;
 @Service
 @Slf4j
 public class DbService {
+    @Value("spring.datasource.url")
     public static final String URL = "jdbc:postgresql://localhost:5432/news";
+    @Value("spring.datasource.username")
     public static final String USER = "postgres";
+    @Value("spring.datasource.password")
     public static final String PASSWORD = "1234";
+
+
     public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"time\",\"description\",\"news_agency\",\"category\")\n" +
             "VALUES ('%s','%s','%s','%s','%s')";
     private QueryBuilder queryBuilder;
@@ -55,7 +61,7 @@ public class DbService {
             Statement statement = connection.createStatement();
             String query = queryBuilder.buildSearchQuery(params);
             ResultSet result = statement.executeQuery(query);
-
+            //todo parsing results
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
         }

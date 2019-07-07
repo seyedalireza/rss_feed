@@ -6,9 +6,7 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.DbService;
-import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +24,6 @@ public class Api {
 
     @Autowired
     public Api(DbService dbService, FeedService feedService) {
-        this.logger = logger;
         this.dbService = dbService;
         this.feedService = feedService;
     }
