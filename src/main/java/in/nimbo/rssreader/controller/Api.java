@@ -1,9 +1,5 @@
 package in.nimbo.rssreader.controller;
 
-
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
 import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
@@ -15,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
 import java.util.List;
 
 @RequestMapping("/api/v1")

@@ -1,11 +1,6 @@
 package in.nimbo.rssreader.service;
-
-import com.rometools.rome.feed.synd.SyndContent;
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
 import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
-import in.nimbo.rssreader.utility.QueryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +9,6 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,19 +62,17 @@ public class DbService {
 
     public List search(SearchParams params) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            Statement statement = connection.createStatement();
-            String query = queryBuilder.buildSearchQuery(params);
-            ResultSet result = statement.executeQuery(query);
+            PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
+            ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
-            return resultList;
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
         }
         return Collections.emptyList();
     }
 
-    public List parseResult(ResultSet resultSet, Class clazz) {
-        List list = new ArrayList();
+    public <T> List parseResult(ResultSet resultSet, Class clazz) {
+        List<T> list = new ArrayList();
         while (true) {
             try {
                 if (!resultSet.next())
@@ -96,7 +87,7 @@ public class DbService {
 
                     field.setAccessible(false);
                 }
-                list.add(clazzObject);
+                list.add((T) clazzObject);
             } catch (SQLException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 log.error("DBService.parseResult()", e);
             }
