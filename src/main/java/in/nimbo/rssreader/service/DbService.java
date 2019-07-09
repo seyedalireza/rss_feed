@@ -2,10 +2,12 @@ package in.nimbo.rssreader.service;
 import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
 import lombok.extern.slf4j.Slf4j;
+import org.postgresql.ds.PGPoolingDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -18,10 +20,36 @@ import java.util.List;
 public class DbService {
     @Value("spring.datasource.url")
     public static final String URL = "jdbc:postgresql://localhost:5432/news";
+
+    @Value("data-base-name")
+    public String dataBaseName = "news";
+
+    @Value("postgres-port")
+    public Integer port;
+
+    @Value("server-name")
+    public String serverName = "localhost";
+
     @Value("spring.datasource.username")
     public static final String USER = "postgres";
+
     @Value("spring.datasource.password")
     public static final String PASSWORD = "1234";
+
+    public PGPoolingDataSource source;
+
+    @PostConstruct
+    public void initialConnections() {
+        source = new PGPoolingDataSource();
+        source.setDataSourceName("dbServie-dataSource");
+        source.setPortNumber(port);
+        source.setInitialConnections(5);
+        source.setServerName(serverName);
+        source.setDatabaseName(dataBaseName);
+        source.setUser(USER);
+        source.setPassword(PASSWORD);
+        source.setMaxConnections(25);
+    }
 
 
     public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\")\n" +
@@ -34,7 +62,7 @@ public class DbService {
     }
 
     public void addFeedToPostgres(List<News> newsList) {
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = source.getConnection()) {
             Statement statement = connection.createStatement();
             for (News news : newsList) {
                 try {
@@ -61,7 +89,7 @@ public class DbService {
     }
 
     public List search(SearchParams params) {
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
