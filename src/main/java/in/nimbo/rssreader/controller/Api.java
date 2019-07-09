@@ -41,28 +41,27 @@ public class Api {
 
     @PostMapping("/search")
     public ResponseEntity<List> search(@RequestBody SearchParams params) {
-        List search = dbService.search(params);
-        return new ResponseEntity<List>(search, HttpStatus.OK);
+        List searchResult = dbService.search(params);
+        return new ResponseEntity<List>(searchResult, HttpStatus.OK);
     }
 
-    @GetMapping("/number-of-duplicate-news")
+    @GetMapping("/number-of-news")
     public ResponseEntity<Integer> getNumberOfDuplicateNews() {
-        return new ResponseEntity<Integer>(HttpStatus.OK);
+        int numberOfNews = dbService.getNumberOfNews();
+        return new ResponseEntity<>(numberOfNews, HttpStatus.OK);
     }
 
     @GetMapping("/number-of-newsagents")
     public ResponseEntity<Integer> getNumberOfNewsAgency() {
-        return new ResponseEntity<Integer>(HttpStatus.OK);
-    }
-
-    @GetMapping("/number-of-news")
-    public ResponseEntity<Integer> getNumberOfNews() {
-        return new ResponseEntity<Integer>(HttpStatus.OK);
+        int numberOfNewsagency = dbService.getNumberOfNewsagency();
+        return new ResponseEntity<Integer>(numberOfNewsagency, HttpStatus.OK);
     }
 
     @GetMapping("/news-in-day")
-    public ResponseEntity<String> getNewsOfDat() {
-        return new ResponseEntity<String>(HttpStatus.OK);
+    public ResponseEntity<List> getNewsOfDay(@RequestParam String day) {
+        SearchParams searchParams = SearchParams.builder().date(day).build();
+        List searchResult = dbService.search(searchParams);
+        return new ResponseEntity<List>(searchResult, HttpStatus.OK);
     }
 
     @GetMapping("/crawl")
