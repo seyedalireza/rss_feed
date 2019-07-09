@@ -18,22 +18,22 @@ import java.util.List;
 @Service
 @Slf4j
 public class DbService {
-    @Value("spring.datasource.url")
+    @Value("${spring.datasource.url}")
     public static final String URL = "jdbc:postgresql://localhost:5432/news";
 
-    @Value("data-base-name")
+    @Value("${data-base-name}")
     public String dataBaseName = "news";
 
-    @Value("postgres-port")
-    public Integer port;
+    @Value("${postgres-port}")
+    public String port = "5432";
 
-    @Value("server-name")
+    @Value("${server-name}")
     public String serverName = "localhost";
 
-    @Value("spring.datasource.username")
+    @Value("${spring.datasource.username}")
     public static final String USER = "postgres";
 
-    @Value("spring.datasource.password")
+    @Value("${spring.datasource.password}")
     public static final String PASSWORD = "1234";
 
     public PGPoolingDataSource source;
@@ -42,7 +42,7 @@ public class DbService {
     public void initialConnections() {
         source = new PGPoolingDataSource();
         source.setDataSourceName("dbServie-dataSource");
-        source.setPortNumber(port);
+        source.setPortNumber(Integer.parseInt(port));
         source.setInitialConnections(5);
         source.setServerName(serverName);
         source.setDatabaseName(dataBaseName);
