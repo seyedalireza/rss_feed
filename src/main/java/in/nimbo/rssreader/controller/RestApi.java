@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 import java.util.List;
 
 @RequestMapping("/api/v1")
@@ -29,32 +31,53 @@ public class RestApi {
     }
 
     @PostMapping("/add-feed")
-    public ResponseEntity<String> add(@RequestParam String uri) {// todo invalid url and happen exception
+    public ResponseEntity<String> add(@RequestParam String uri) {
+        log.info("add feed request received with uri: " + uri);
         try {
             List<News> newsList = feedService.getFeeds(uri);
             dbService.addFeedToPostgres(newsList);
+            log.info("add feed request finished with uri: " + uri);
         } catch (Exception e) {
             log.error("Api.add():  uri =" + uri, e);
+            return new ResponseEntity<String>("internal error", HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List> search(@RequestBody SearchParams params) {//todo invalid params and happen exception
-        List searchResult = dbService.search(params);
+    public ResponseEntity<List> search(@RequestBody SearchParams params) {
+        log.info("search request received with params: " + params.toString());
+        List searchResult = null;
+        try {
+            searchResult = dbService.search(params);
+        } catch (Exception e) {
+            return new ResponseEntity<List>(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<List>(searchResult, HttpStatus.OK);
     }
 
     @PostMapping("/count-search")
-    public ResponseEntity<Integer> countSearch(@RequestBody SearchParams params) {//todo invalid params and happen exception
-        Integer searchResult = dbService.countSearch(params);
+    public ResponseEntity<Integer> countSearch(@RequestBody SearchParams params) {
+
+        log.info("count search request received with params: " + params.toString());
+        Integer searchResult = null;
+        try {
+            searchResult = dbService.countSearch(params);
+        } catch (Exception e) {
+            return new ResponseEntity<>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(searchResult, HttpStatus.OK);
     }
 
     @GetMapping("/number-of-news")
     public ResponseEntity<Integer> getNumberOfDuplicateNews() {
-        int numberOfNews = dbService.getNumberOfNews();
-        if (numberOfNews < 0) {
+        log.info("number of newsagents request received");
+
+        int numberOfNews = 0;
+        try {
+            numberOfNews = dbService.getNumberOfNews();
+        } catch (Exception e) {
             return new ResponseEntity<>(-1, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(numberOfNews, HttpStatus.OK);
@@ -62,7 +85,14 @@ public class RestApi {
 
     @GetMapping("/number-of-newsagents")
     public ResponseEntity<Integer> getNumberOfNewsAgency() {
-        int numberOfNewsagency = dbService.getNumberOfNewsagency();
+        log.info("number of newsagents request received");
+
+        int numberOfNewsagency = 0;
+        try {
+            numberOfNewsagency = dbService.getNumberOfNewsagency();
+        } catch (Exception e) {
+            return new ResponseEntity<>(-1, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         if (numberOfNewsagency < 0) {
             return new ResponseEntity<>(-1, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -71,13 +101,20 @@ public class RestApi {
 
     @GetMapping("/news-in-day")
     public ResponseEntity<List> getNewsOfDay(@RequestParam String day) {//happen exception
+        log.info("news of a day request received with day: " + day);
         SearchParams searchParams = SearchParams.builder().date(day).build();
-        List searchResult = dbService.search(searchParams);
-        return new ResponseEntity<List>(searchResult, HttpStatus.OK);
+        List searchResult = null;
+        try {
+            searchResult = dbService.search(searchParams);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(searchResult, HttpStatus.OK);
     }
 
     @GetMapping("/crawl")
     public ResponseEntity<String> crawl(@RequestParam String uri) {
+        log.info("crawl request received with uri: " + uri);
         List<String> rssUrlList = crawler.getRssUrlList(uri);
         for (String rssUrl : rssUrlList) {
             try {
@@ -87,6 +124,7 @@ public class RestApi {
                 log.error("Api.add(): ", e);
             }
         }
+        log.info("crawl request finished with uri: " + uri);
         return new ResponseEntity<String>("site rss added", HttpStatus.OK);
     }
 }

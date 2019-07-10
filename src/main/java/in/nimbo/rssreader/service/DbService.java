@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -59,7 +58,7 @@ public class DbService {
         this.queryBuilder = queryBuilder;
     }
 
-    public void addFeedToPostgres(List<News> newsList) {
+    public void addFeedToPostgres(List<News> newsList) throws Exception {
         try (Connection connection = source.getConnection()) {
             Statement statement = connection.createStatement();
             for (News news : newsList) {
@@ -76,29 +75,30 @@ public class DbService {
                     String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl());
 
                     statement.executeQuery(query);
-
+                    log.info("news add successfully , news: ", news.toString());
                 } catch (Exception e) {
                     log.error("DbService.addToPostgres()", e);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
         }
     }
 
-    public List search(SearchParams params) {
+    public List search(SearchParams params) throws Exception {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
             return resultList;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
         }
-        return Collections.emptyList();
     }
 
-    public int countSearch(SearchParams params) {
+    public int countSearch(SearchParams params) throws Exception {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.buildCountQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
@@ -107,7 +107,7 @@ public class DbService {
             }
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
-            return -1;
+            throw new Exception("internal error");
         }
         return 0;
     }
@@ -136,24 +136,25 @@ public class DbService {
         return list;
     }
 
-    public int getNumberOfNews() {
+    public int getNumberOfNews() throws Exception {
         return getDistinctCountOfcolumn("title");
     }
 
-    private int getDistinctCountOfcolumn(String columnName) {
+    private int getDistinctCountOfcolumn(String columnName) throws Exception {
         try (Connection connection = source.getConnection()) {
-            PreparedStatement preparedStatement = queryBuilder.distictCountQuery(connection, Arrays.asList(columnName), "news");
+            PreparedStatement preparedStatement = queryBuilder.distinctCountQuery(connection, Arrays.asList(columnName), "news");
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 return resultSet.getInt("count");
             }
         } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
         }
         return -1;
     }
 
-    public int getNumberOfNewsagency() {
+    public int getNumberOfNewsagency() throws Exception {
         return getDistinctCountOfcolumn("newsagency");
     }
 }

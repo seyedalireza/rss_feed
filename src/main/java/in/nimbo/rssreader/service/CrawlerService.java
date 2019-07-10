@@ -3,6 +3,7 @@ package in.nimbo.rssreader.service;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,6 @@ public class CrawlerService { // TODO MultiThread with thread pool and executor
 
     @Scheduled(fixedRate = 86400000)
     public void crawl() {
-        //todo get all of
     }
 
 
@@ -30,7 +30,6 @@ public class CrawlerService { // TODO MultiThread with thread pool and executor
         List<String> result = new ArrayList<>();
 
         String rssListPageLink = getRssListPageLink(siteUrl);
-
         try {
             Document doc = Jsoup.connect(rssListPageLink).get();
             doc.getElementsByTag("a").forEach(element -> {
@@ -48,7 +47,6 @@ public class CrawlerService { // TODO MultiThread with thread pool and executor
         } catch (IOException e) {
             log.error("CrawlerService.getRssUrlList()", e);
         }
-
         return result;
     }
 
@@ -63,7 +61,6 @@ public class CrawlerService { // TODO MultiThread with thread pool and executor
             else
                 link = siteUrl + "/" + href;
         }
-
         return link;
     }
 

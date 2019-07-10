@@ -14,4 +14,16 @@ public class SearchParams {
     private String text;
     private String source;
     private String rssUrl;
+
+    @Override
+    public String toString() {
+        return "SearchParams{" +
+                "title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                ", newsAgency='" + newsAgency + '\'' +
+                ", text='" + text + '\'' +
+                ", source='" + source + '\'' +
+                ", rssUrl='" + rssUrl + '\'' +
+                '}';
+    }
 }

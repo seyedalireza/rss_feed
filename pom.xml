@@ -16,7 +16,7 @@
         <springboot.version>2.1.6.RELEASE</springboot.version>
         <lombok.version>1.18.8</lombok.version>
         <jsoup.version>1.11.3</jsoup.version>
-
+        <postgresql-embedded.version>2.10</postgresql-embedded.version>
     </properties>
 
 
@@ -51,6 +51,12 @@
             <version>2.9.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>ru.yandex.qatools.embed</groupId>
+            <artifactId>postgresql-embedded</artifactId>
+            <version>${postgresql-embedded.version}</version>
+            <scope>test</scope>
+        </dependency>
 
          <!--https://mvnrepository.com/artifact/postgresql/postgresql-->
         <dependency>

@@ -24,7 +24,7 @@ public class FeedService {
         ArrayList<News> result = new ArrayList<>();
         String siteUrl = "";
         Matcher matcher = CrawlerService.urlPattern.matcher(rssUrl);
-        if(matcher.find()) {
+        if (matcher.find()) {
             siteUrl = matcher.group(2);
         } else {
             return result;
@@ -35,7 +35,7 @@ public class FeedService {
             SyndFeed syndFeed = new SyndFeedInput().build(xmlReader);
             for (SyndEntry entry : syndFeed.getEntries()) {
                 String title = entry.getTitle();
-                String description = entry.getDescription().getValue();
+                String description = entry.getDescription().getValue();// todo this can throw null pointer exception
                 String newsAgency = syndFeed.getTitle();
                 DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
                 String strDate = dateFormat.format(entry.getPublishedDate());

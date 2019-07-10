@@ -15,10 +15,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class QueryBuilder {
-
-    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\",\"source\",\"rssurl\")\n" +
-            "VALUES ('%s','%s','%s','%s','%s','%s','%s')";
-
     public PreparedStatement buildSearchQuery(Connection connection, SearchParams params) throws SQLException {
         String select = "SELECT * FROM news.news WHERE ";
         return buildLikeQueryFromParameters(connection, params, select);
@@ -29,7 +25,7 @@ public class QueryBuilder {
         return buildLikeQueryFromParameters(connection, params, count);
     }
 
-    public PreparedStatement distictCountQuery(Connection connection, List<String> columnNames, String tableName)
+    public PreparedStatement distinctCountQuery(Connection connection, List<String> columnNames, String tableName)
             throws SQLException {
         StringBuilder c = new StringBuilder();
         for (int i = 0; i < columnNames.size(); i++) {
