@@ -40,7 +40,7 @@ public class QueryBuilder {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         for (int i = 0; i < columnNames.size(); i++) {
-            preparedStatement.setString(i+1, columnNames.get(i));
+            preparedStatement.setString(i + 1, columnNames.get(i));
         }
         return preparedStatement;
     }
@@ -104,9 +104,8 @@ public class QueryBuilder {
         PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(query));
 
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            preparedStatement.setString(entry.getKey(), "%" +entry.getValue() + "%");
+            preparedStatement.setString(entry.getKey(), "%" + entry.getValue() + "%");
         }
         return preparedStatement;
     }
-
 }

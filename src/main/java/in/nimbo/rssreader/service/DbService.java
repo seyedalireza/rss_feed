@@ -102,9 +102,12 @@ public class DbService {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.buildCountQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
-            return result.getInt("total");
+            while(result.next()){
+                return result.getInt("count");
+            }
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
+            return -1;
         }
         return 0;
     }
@@ -141,7 +144,9 @@ public class DbService {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.distictCountQuery(connection, Arrays.asList(columnName), "news");
             ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.getInt("total");
+            while(resultSet.next()){
+                return resultSet.getInt("count");
+            }
         } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
         }
