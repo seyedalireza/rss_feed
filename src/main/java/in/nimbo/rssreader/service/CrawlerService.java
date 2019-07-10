@@ -3,6 +3,7 @@ package in.nimbo.rssreader.service;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,8 +17,14 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class CrawlerService {
+public class CrawlerService { // TODO MultiThread with thread pool and executor
     public static Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b)([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
+
+    @Scheduled(fixedRate = 86400000)
+    public void crawl() {
+        //todo get all of
+    }
+
 
     public List<String> getRssUrlList(String siteUrl) {
         List<String> result = new ArrayList<>();
@@ -71,7 +78,7 @@ public class CrawlerService {
                 }
             });
         } catch (IOException e) {
-            log.error("CrawlerService.getRssUrlList()" , e);
+            log.error("CrawlerService.getRssUrlList()", e);
         }
         return link.get();
     }
