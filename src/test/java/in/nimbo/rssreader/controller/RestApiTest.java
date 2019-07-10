@@ -1,6 +1,8 @@
 package in.nimbo.rssreader.controller;
 
 import in.nimbo.rssreader.model.News;
+import in.nimbo.rssreader.model.RangedSearchParams;
+import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
 import in.nimbo.rssreader.service.FeedService;
@@ -38,53 +40,54 @@ public class RestApiTest {
     @Test
     public void testAdd() throws Exception {
         when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
-
         ResponseEntity<String> result = restApi.add("uri");
-        Assert.assertEquals(null, result);
+        Assert.assertEquals(null, result.getBody());
     }
 
     @Test
     public void testSearch() throws Exception {
         when(dbService.search(any())).thenReturn(Arrays.asList("String"));
+        ResponseEntity<List> result = restApi.search(SearchParams.builder().title("ali").build());
+        Assert.assertEquals(Arrays.asList("String"), result.getBody());
+    }
 
-        ResponseEntity<List> result = restApi.search(null);
-        Assert.assertEquals(null, result);
+    @Test
+    public void testRangedSearch() throws Exception {
+        when(dbService.rangedSearch(any())).thenReturn(Arrays.asList("String"));
+        ResponseEntity<List> result = restApi.Rangedsearch(RangedSearchParams.builder().startDate("2019-10-1").endDate("2011-10-9").build());
+        Assert.assertEquals(Arrays.asList("String"), result.getBody());
     }
 
     @Test
     public void testCountSearch() throws Exception {
-        when(dbService.countSearch(any())).thenReturn(0);
-
-        ResponseEntity<Integer> result = restApi.countSearch(null);
-        Assert.assertEquals(null, result);
+        when(dbService.countSearch(any())).thenReturn(10);
+        ResponseEntity<Integer> result = restApi.countSearch(SearchParams.builder().title("test").build());
+        Assert.assertEquals(new Integer(10), result.getBody());
     }
 
     @Test
     public void testGetNumberOfDuplicateNews() throws Exception {
-        when(dbService.getNumberOfNews()).thenReturn(0);
-
+        when(dbService.getNumberOfNews()).thenReturn(10);
         ResponseEntity<Integer> result = restApi.getNumberOfDuplicateNews();
-        Assert.assertEquals(null, result);
+        Assert.assertEquals(new Integer(10), result.getBody());
     }
 
     @Test
     public void testGetNumberOfNewsAgency() throws Exception {
-        when(dbService.getNumberOfNewsagency()).thenReturn(0);
-
+        when(dbService.getNumberOfNewsagency()).thenReturn(10);
         ResponseEntity<Integer> result = restApi.getNumberOfNewsAgency();
-        Assert.assertEquals(null, result);
+        Assert.assertEquals(new Integer(10), result.getBody());
     }
 
     @Test
     public void testGetNewsOfDay() throws Exception {
-        when(dbService.search(any())).thenReturn(Arrays.asList("String"));
-
-        ResponseEntity<List> result = restApi.getNewsOfDay("day");
-        Assert.assertEquals(null, result);
+        when(dbService.search(any())).thenReturn(Arrays.asList("[]"));
+        ResponseEntity<List> result = restApi.getNewsOfDay("2019-10-11");
+        Assert.assertEquals(Arrays.asList("[]"), result.getBody());
     }
 
     @Test
-    public void testCrawl() throws Exception {
+    public void testCrawl() throws Exception {// todo ali
         when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
         when(crawler.getRssUrlList(anyString())).thenReturn(Arrays.<String>asList("String"));
 

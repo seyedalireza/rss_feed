@@ -1,10 +1,10 @@
 package in.nimbo.rssreader.controller;
 
 import in.nimbo.rssreader.model.News;
+import in.nimbo.rssreader.model.RangedSearchParams;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +48,30 @@ public class RestApi {
     @PostMapping("/search")
     public ResponseEntity<List> search(@RequestBody SearchParams params) {
         log.info("search request received with params: " + params.toString());
+        if (params.getDate().matches("(\\d+)-(\\d+)-(\\d+)")) {
+            params.setDate(null);
+        }
         List searchResult = null;
         try {
             searchResult = dbService.search(params);
+        } catch (Exception e) {
+            return new ResponseEntity<List>(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List>(searchResult, HttpStatus.OK);
+    }
+
+    @PostMapping("/ranged-search")
+    public ResponseEntity<List> Rangedsearch(@RequestBody RangedSearchParams params) {
+        log.info("ranged search request received with params: " + params.toString());
+        if (params.getStartDate() == null || !params.getStartDate().matches("(\\d+)-(\\d+)-(\\d+)")) {// todo check invalid pattern
+            params.setStartDate("0-0-0");
+        }
+        if (params.getEndDate() == null || !params.getStartDate().matches("(\\d+)-(\\d+)-(\\d+)")) {// todo check invalid pattern
+            params.setEndDate("9999-12-29");
+        }
+        List searchResult = null;
+        try {
+            searchResult = dbService.rangedSearch(params);
         } catch (Exception e) {
             return new ResponseEntity<List>(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

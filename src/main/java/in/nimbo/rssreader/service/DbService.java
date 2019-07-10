@@ -1,5 +1,6 @@
 package in.nimbo.rssreader.service;
 import in.nimbo.rssreader.model.News;
+import in.nimbo.rssreader.model.RangedSearchParams;
 import in.nimbo.rssreader.model.SearchParams;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.ds.PGPoolingDataSource;
@@ -91,6 +92,7 @@ public class DbService {
             PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
+            result.close();
             return resultList;
         } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
@@ -105,6 +107,7 @@ public class DbService {
             while(result.next()){
                 return result.getInt("count");
             }
+            result.close();
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
             throw new Exception("internal error");
@@ -147,6 +150,7 @@ public class DbService {
             while(resultSet.next()){
                 return resultSet.getInt("count");
             }
+            resultSet.close();
         } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
             throw new Exception("internal error");
@@ -156,5 +160,18 @@ public class DbService {
 
     public int getNumberOfNewsagency() throws Exception {
         return getDistinctCountOfcolumn("newsagency");
+    }
+
+    public List rangedSearch(RangedSearchParams rangedSearch) throws Exception {
+        try (Connection connection = source.getConnection()) {
+            PreparedStatement preparedStatement = queryBuilder.buildRangedSearchQuery(connection, rangedSearch);
+            ResultSet result = preparedStatement.executeQuery();
+            List resultList = parseResult(result, News.class);
+            result.close();
+            return resultList;
+        } catch (SQLException e) {
+            log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
+        }
     }
 }

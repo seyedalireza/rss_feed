@@ -12,17 +12,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class CrawlerService { // TODO MultiThread with thread pool and executor
+public class CrawlerService {
     public static Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b)([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
 
     @Scheduled(fixedRate = 86400000)
     public void crawl() {
+        ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
+        // todo use queue for uri
+        // for each thread add this queue and then ...
+        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(8);
+        //todo submit tasks (add to data base from rss list)
     }
 
 

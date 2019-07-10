@@ -1,13 +1,16 @@
 package in.nimbo.rssreader.service;
 
+import in.nimbo.rssreader.model.RangedSearchParams;
 import in.nimbo.rssreader.model.SearchParams;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +20,21 @@ import java.util.Map;
 public class QueryBuilder {
     public PreparedStatement buildSearchQuery(Connection connection, SearchParams params) throws SQLException {
         String select = "SELECT * FROM news.news WHERE ";
-        return buildLikeQueryFromParameters(connection, params, select);
+        return buildLikeQueryFromParameters(connection, params, select, null);
+    }
+
+    public PreparedStatement buildRangedSearchQuery(Connection connection, RangedSearchParams searchQuery)
+            throws SQLException {
+        String select = "SELECT * FROM news.news WHERE date BETWEEN ? and ? and ";
+        HashMap<Integer, String> prePs = new HashMap<>();
+        prePs.put(1, searchQuery.getStartDate());
+        prePs.put(1, searchQuery.getEndDate());
+        return buildLikeQueryFromParameters(connection, searchQuery.getParams(), select, prePs);
     }
 
     public PreparedStatement buildCountQuery(Connection connection, SearchParams params) throws SQLException {
         String count = "SELECT COUNT(*) FROM news.news WHERE ";
-        return buildLikeQueryFromParameters(connection, params, count);
+        return buildLikeQueryFromParameters(connection, params, count, null);
     }
 
     public PreparedStatement distinctCountQuery(Connection connection, List<String> columnNames, String tableName)
@@ -82,10 +94,20 @@ public class QueryBuilder {
         return value;
     }
 
-    private PreparedStatement buildLikeQueryFromParameters(Connection connection, SearchParams params, String prefix) throws SQLException {
+    private PreparedStatement buildLikeQueryFromParameters(Connection connection, SearchParams params,
+                                                           String prefix, Map<Integer, String> prePS) throws SQLException {
+        if (prePS == null) {
+            prePS = new HashMap<>();
+        }
         StringBuilder queryBuilder = new StringBuilder(prefix);
-        Map<Integer, String> map = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>(prePS);
+        ArrayList<Integer> keys = new ArrayList<>(map.keySet());
         int counter = 1;
+        for (Integer key : keys) {
+            if (key >= counter) {
+                counter = key + 1;
+            }
+        }
         for (Field field : SearchParams.class.getDeclaredFields()) {
             Object value = null;
             value = getValueOfField(params, field, value);
