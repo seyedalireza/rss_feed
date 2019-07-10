@@ -52,8 +52,8 @@ public class DbService {
     }
 
 
-    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\")\n" +
-            "VALUES ('%s','%s','%s','%s','%s')";
+    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\",\"source\",\"rssurl\")\n" +
+            "VALUES ('%s','%s','%s','%s','%s','%s','%s')";
     private QueryBuilder queryBuilder;
 
     @Autowired
@@ -75,7 +75,7 @@ public class DbService {
                     if (title == null) title = "";
                     String category = news.getCategory(); // !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : ""
 
-                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category);
+                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl());
 
                     statement.executeQuery(query);
 
@@ -93,6 +93,7 @@ public class DbService {
             PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
+            return resultList;
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
         }

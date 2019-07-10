@@ -15,4 +15,7 @@ public class News {
     private String newsAgency;
     private String category;
     private String date;
+    private String source;
+    private String rssUrl;
+
 }

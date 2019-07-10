@@ -15,12 +15,20 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 @Service
 @Slf4j
 public class FeedService {
     public List<News> getFeeds(String rssUrl) {
         ArrayList<News> result = new ArrayList<>();
+        String siteUrl = "";
+        Matcher matcher = CrawlerService.urlPattern.matcher(rssUrl);
+        if(matcher.find()) {
+            siteUrl = matcher.group(2);
+        } else {
+            return result;
+        }
         try {
             URL url = new URL(rssUrl);
             XmlReader xmlReader = new XmlReader(url);
@@ -32,7 +40,7 @@ public class FeedService {
                 DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
                 String strDate = dateFormat.format(entry.getPublishedDate());
                 String category = !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : "";
-                News news = new News(title, description, newsAgency, category, strDate);
+                News news = new News(title, description, newsAgency, category, strDate, siteUrl, rssUrl);
                 result.add(news);
             }
         } catch (IOException | FeedException e) {

@@ -17,8 +17,8 @@ import java.util.Map;
 @Slf4j
 public class QueryBuilder {
 
-    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\")\n" +
-            "VALUES ('%s','%s','%s','%s','%s')";
+    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\",\"source\",\"rssurl\")\n" +
+            "VALUES ('%s','%s','%s','%s','%s','%s','%s')";
 
     public PreparedStatement buildSearchQuery(Connection connection, SearchParams params) throws SQLException {
         String select = "SELECT * FROM news WHERE ";

@@ -12,4 +12,6 @@ public class SearchParams {
     private String date;
     private String newsAgency;
     private String text;
+    private String source;
+    private String rssUrl;
 }

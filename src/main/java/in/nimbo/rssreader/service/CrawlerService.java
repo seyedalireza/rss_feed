@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 public class CrawlerService {
-    private Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
+    public static Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b)([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
 
     public List<String> getRssUrlList(String siteUrl) {
         List<String> result = new ArrayList<>();
@@ -32,14 +32,6 @@ public class CrawlerService {
                     href = getAbsoluteLink(siteUrl, href);
                     if (!href.toLowerCase().contains("rss"))
                         return;
-//                    URL url = new URL(href);
-//                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                    connection.setConnectTimeout(1000);
-//                    String contentType = connection.getContentType();
-//                    if (contentType == null)
-//                        return;
-//                    if (!contentType.contains("xml") && !contentType.contains("rss"))
-//                        return;
 
                     result.add(href);
                 } catch (Exception e) {
