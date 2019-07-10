@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +15,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class QueryBuilder {
-
-    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\")\n" +
-            "VALUES ('%s','%s','%s','%s','%s')";
-
     public PreparedStatement buildSearchQuery(Connection connection, SearchParams params) throws SQLException {
         String select = "SELECT * FROM news WHERE ";
         return buildLikeQueryFromParameters(connection, params, select);
@@ -30,7 +25,8 @@ public class QueryBuilder {
         return buildLikeQueryFromParameters(connection, params, count);
     }
 
-    public PreparedStatement distictCountQuery(Connection connection, List<String> columnNames, String tableName) throws SQLException {
+    public PreparedStatement distictCountQuery(Connection connection, List<String> columnNames, String tableName)
+            throws SQLException {
         StringBuilder c = new StringBuilder();
         for (int i = 0; i < columnNames.size(); i++) {
             c.append("?").append(", ");
@@ -45,7 +41,8 @@ public class QueryBuilder {
         return preparedStatement;
     }
 
-    public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance) throws SQLException {//todo test this function
+    public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
+            throws SQLException {//todo test this function
         String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
         StringBuilder queryBuilder = new StringBuilder(count);
         HashMap<Integer, String> map = new HashMap<>();
@@ -107,6 +104,5 @@ public class QueryBuilder {
         }
         return preparedStatement;
     }
-
-
+    
 }

@@ -19,9 +19,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class DbService {
-    @Value("${spring.datasource.url}")
-    public static final String URL = "jdbc:postgresql://localhost:5432/news";
-
     @Value("${data-base-name}")
     public String dataBaseName = "news";
 
@@ -94,6 +91,7 @@ public class DbService {
             PreparedStatement preparedStatement = queryBuilder.buildSearchQuery(connection, params);
             ResultSet result = preparedStatement.executeQuery();
             List resultList = parseResult(result, News.class);
+            return resultList;
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
         }

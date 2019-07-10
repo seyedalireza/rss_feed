@@ -32,11 +32,23 @@
             <version>${rometools.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
         </dependency>
 
 
@@ -45,11 +57,6 @@
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
 
         <dependency>
