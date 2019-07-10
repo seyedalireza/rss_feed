@@ -20,12 +20,12 @@ public class QueryBuilder {
             "VALUES ('%s','%s','%s','%s','%s','%s','%s')";
 
     public PreparedStatement buildSearchQuery(Connection connection, SearchParams params) throws SQLException {
-        String select = "SELECT * FROM news WHERE ";
+        String select = "SELECT * FROM news.news WHERE ";
         return buildLikeQueryFromParameters(connection, params, select);
     }
 
     public PreparedStatement buildCountQuery(Connection connection, SearchParams params) throws SQLException {
-        String count = "SELECT COUNT(*) FROM news WHERE ";
+        String count = "SELECT COUNT(*) FROM news.news WHERE ";
         return buildLikeQueryFromParameters(connection, params, count);
     }
 
@@ -94,7 +94,7 @@ public class QueryBuilder {
             Object value = null;
             value = getValueOfField(params, field, value);
             if (value != null) {
-                queryBuilder.append(field.getName().toLowerCase()).append("=").append("?")
+                queryBuilder.append(field.getName().toLowerCase()).append(" like ").append("?")
                         .append(" and ");
                 map.put(counter, value.toString());
                 counter++;
@@ -104,7 +104,7 @@ public class QueryBuilder {
         PreparedStatement preparedStatement = connection.prepareStatement(String.valueOf(query));
 
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            preparedStatement.setString(entry.getKey(), entry.getValue());
+            preparedStatement.setString(entry.getKey(), "%" +entry.getValue() + "%");
         }
         return preparedStatement;
     }
