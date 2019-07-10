@@ -4,6 +4,7 @@ import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.SearchParams;
 import in.nimbo.rssreader.service.CrawlerService;
 import in.nimbo.rssreader.service.DbService;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import in.nimbo.rssreader.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,12 @@ public class RestApi {
     public ResponseEntity<List> search(@RequestBody SearchParams params) {//todo invalid params and happen exception
         List searchResult = dbService.search(params);
         return new ResponseEntity<List>(searchResult, HttpStatus.OK);
+    }
+
+    @PostMapping("/count-search")
+    public ResponseEntity<Integer> countSearch(@RequestBody SearchParams params) {//todo invalid params and happen exception
+        Integer searchResult = dbService.countSearch(params);
+        return new ResponseEntity<>(searchResult, HttpStatus.OK);
     }
 
     @GetMapping("/number-of-news")

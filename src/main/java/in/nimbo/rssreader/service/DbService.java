@@ -98,6 +98,17 @@ public class DbService {
         return Collections.emptyList();
     }
 
+    public int countSearch(SearchParams params) {
+        try (Connection connection = source.getConnection()) {
+            PreparedStatement preparedStatement = queryBuilder.buildCountQuery(connection, params);
+            ResultSet result = preparedStatement.executeQuery();
+            return result.getInt("total");
+        } catch (Exception e) {
+            log.error("DbService.addToPostgres()", e);
+        }
+        return 0;
+    }
+
     public <T> List parseResult(ResultSet resultSet, Class clazz) {
         List<T> list = new ArrayList();
         while (true) {
