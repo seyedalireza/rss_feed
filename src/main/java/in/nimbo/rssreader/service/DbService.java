@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,5 +123,24 @@ public class DbService {
             }
         }
         return list;
+    }
+
+    public int getNumberOfNews() {
+        return getDistinctCountOfcolumn("title");
+    }
+
+    private int getDistinctCountOfcolumn(String columnName) {
+        try (Connection connection = source.getConnection()) {
+            PreparedStatement preparedStatement = queryBuilder.distictCountQuery(connection, Arrays.asList(columnName), "news");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.getInt("total");
+        } catch (SQLException e) {
+            log.error("DbService.addToPostgres()", e);
+        }
+        return -1;
+    }
+
+    public int getNumberOfNewsagency() {
+        return getDistinctCountOfcolumn("newsagency");
     }
 }
