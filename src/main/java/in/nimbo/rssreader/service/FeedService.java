@@ -35,7 +35,10 @@ public class FeedService {
             SyndFeed syndFeed = new SyndFeedInput().build(xmlReader);
             for (SyndEntry entry : syndFeed.getEntries()) {
                 String title = entry.getTitle();
-                String description = entry.getDescription().getValue();// todo this can throw null pointer exception
+                String description = "";
+                if (entry.getDescription() != null) {
+                    description = entry.getDescription().getValue();
+                }
                 String newsAgency = syndFeed.getTitle();
                 DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
                 String strDate = dateFormat.format(entry.getPublishedDate());

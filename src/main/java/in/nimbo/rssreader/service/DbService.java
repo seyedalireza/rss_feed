@@ -140,12 +140,12 @@ public class DbService {
     }
 
     public int getNumberOfNews() throws Exception {
-        return getDistinctCountOfcolumn("title");
+        return getDistinctCountOfColumn("title");
     }
 
-    private int getDistinctCountOfcolumn(String columnName) throws Exception {
+    private int getDistinctCountOfColumn(String columnName) throws Exception {
         try (Connection connection = source.getConnection()) {
-            PreparedStatement preparedStatement = queryBuilder.distinctCountQuery(connection, Arrays.asList(columnName), "news");
+            PreparedStatement preparedStatement = queryBuilder.distinctCountQuery(connection, Arrays.asList(columnName), "news.news");
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 return resultSet.getInt("count");
@@ -159,7 +159,7 @@ public class DbService {
     }
 
     public int getNumberOfNewsagency() throws Exception {
-        return getDistinctCountOfcolumn("newsagency");
+        return getDistinctCountOfColumn("newsagency");
     }
 
     public List rangedSearch(RangedSearchParams rangedSearch) throws Exception {
