@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -50,7 +49,7 @@ public class QueryBuilder {
     }
 
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
-            throws SQLException {//todo test this function
+            throws SQLException {
         String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
         StringBuilder queryBuilder = new StringBuilder(count);
         HashMap<Integer, String> map = new HashMap<>();

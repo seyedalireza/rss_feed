@@ -1,9 +1,7 @@
 package in.nimbo.rssreader.service;
 
 import in.nimbo.rssreader.model.News;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,10 +19,10 @@ import java.util.List;
 import static in.nimbo.rssreader.service.DbService.PASSWORD;
 import static in.nimbo.rssreader.service.DbService.USER;
 import static org.mockito.Mockito.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DbServiceTest {
-    static PGPoolingDataSource source;
     @Mock
     QueryBuilder queryBuilder;
     @Mock
@@ -32,38 +30,25 @@ public class DbServiceTest {
     @InjectMocks
     DbService dbService;
 
-    public static void initialConnections() throws SQLException {
-        source = new PGPoolingDataSource();
-        source.setDataSourceName("dbService-dataSource");
-        source.setPortNumber(5431);
-        source.setInitialConnections(5);
-        source.setServerName("localhost");
-        source.setDatabaseName("news");
-        source.setUser(USER);
-        source.setPassword(PASSWORD);
-        source.setMaxConnections(25);
-        source.getConnection();
-    }
-
-
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException {
+        dbService.createConnectionPool("test");
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void testInitialConnections() throws Exception {
-        dbService.initialConnections();
+    @After
+    public void after() {
+        dbService.closeConnections();
     }
 
     @Test
     public void testAddFeedToPostgres() throws Exception {
-        dbService.addFeedToPostgres(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
+        dbService.addFeedToPostgres(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "2019-1-1", "source", "rssUrl")));
     }
 
     @Test
     public void testSearch() throws Exception {
-        when(queryBuilder.buildSearchQuery(any(), any())).thenReturn(null);
+        when(queryBuilder.buildSearchQuery(any(), any())).thenCallRealMethod();
 
         List result = dbService.search(null);
         Assert.assertEquals(Arrays.asList("String"), result);
@@ -71,7 +56,7 @@ public class DbServiceTest {
 
     @Test
     public void testCountSearch() throws Exception {
-        when(queryBuilder.buildCountQuery(any(), any())).thenReturn(null);
+        when(queryBuilder.buildCountQuery(any(), any())).thenCallRealMethod();
 
         int result = dbService.countSearch(null);
         Assert.assertEquals(0, result);
@@ -79,14 +64,13 @@ public class DbServiceTest {
 
     @Test
     public void testParseResult() throws Exception {
-
 //        List result = dbService.parseResult(null, Class.forName("in.nimbo.rssreader.service.DbService"));
 //        Assert.assertEquals(Arrays.asList("String"), result);
     }
 
     @Test
     public void testGetNumberOfNews() throws Exception {
-        when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenReturn(null);
+        when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenCallRealMethod();
 
         int result = dbService.getNumberOfNews();
         Assert.assertEquals(0, result);
@@ -94,7 +78,7 @@ public class DbServiceTest {
 
     @Test
     public void testGetNumberOfNewsagency() throws Exception {
-        when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenReturn(null);
+        when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenCallRealMethod();
 
         int result = dbService.getNumberOfNewsAgency();
         Assert.assertEquals(0, result);
