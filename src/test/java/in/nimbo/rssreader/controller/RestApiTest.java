@@ -86,14 +86,14 @@ public class RestApiTest {
         Assert.assertEquals(Arrays.asList("[]"), result.getBody());
     }
 
-    @Test
-    public void testCrawl() throws Exception {// todo ali
-        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
-        when(crawler.getRssUrlList(anyString())).thenReturn(Arrays.<String>asList("String"));
-
-        ResponseEntity<String> result = restApi.crawl("uri");
-        Assert.assertEquals(null, result);
-    }
+//    @Test
+//    public void testCrawl() throws Exception {// todo ali
+//        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
+//        when(crawler.getRssUrlList(anyString())).thenReturn(Arrays.<String>asList("String"));
+//
+//        ResponseEntity<String> result = restApi.crawl("uri");
+//        Assert.assertEquals(null, result);
+//    }
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme

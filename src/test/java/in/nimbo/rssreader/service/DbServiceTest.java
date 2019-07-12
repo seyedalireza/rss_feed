@@ -71,7 +71,6 @@ public class DbServiceTest {
     @Test
     public void testGetNumberOfNews() throws Exception {
         when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenCallRealMethod();
-
         int result = dbService.getNumberOfNews();
         Assert.assertEquals(0, result);
     }

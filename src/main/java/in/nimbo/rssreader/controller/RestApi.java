@@ -48,7 +48,7 @@ public class RestApi {
     @PostMapping("/search")
     public ResponseEntity<List> search(@RequestBody SearchParams params) {
         log.info("search request received with params: " + params.toString());
-        if (params.getDate().matches("(\\d+)-(\\d+)-(\\d+)")) {
+        if (params.getDate() != null && params.getDate().matches("(\\d+)-(\\d+)-(\\d+)")) {
             params.setDate(null);
         }
         List searchResult = null;

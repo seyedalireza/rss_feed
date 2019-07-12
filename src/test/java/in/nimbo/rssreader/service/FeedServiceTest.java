@@ -25,11 +25,11 @@ public class FeedServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void testGetFeeds() throws Exception {
-        List<News> result = feedService.getFeeds("rssUrl");
-        Assert.assertEquals(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")), result);
-    }
+//    @Test
+//    public void testGetFeeds() throws Exception {
+//        List<News> result = feedService.getFeeds("rssUrl");
+//        Assert.assertEquals(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")), result);
+//    }
 }
 
 //Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
