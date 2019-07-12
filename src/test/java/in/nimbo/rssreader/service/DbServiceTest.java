@@ -58,6 +58,7 @@ public class DbServiceTest {
 
     @Test
     public void testParseResult() throws Exception {
+
         List result = dbService.parseResult(null, Class.forName("in.nimbo.rssreader.service.DbService"));
         Assert.assertEquals(Arrays.asList("String"), result);
     }
@@ -74,7 +75,7 @@ public class DbServiceTest {
     public void testGetNumberOfNewsagency() throws Exception {
         when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenReturn(null);
 
-        int result = dbService.getNumberOfNewsagency();
+        int result = dbService.getNumberOfNewsAgency();
         Assert.assertEquals(0, result);
     }
 }

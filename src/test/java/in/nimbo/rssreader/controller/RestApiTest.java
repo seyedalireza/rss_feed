@@ -74,7 +74,7 @@ public class RestApiTest {
 
     @Test
     public void testGetNumberOfNewsAgency() throws Exception {
-        when(dbService.getNumberOfNewsagency()).thenReturn(10);
+        when(dbService.getNumberOfNewsAgency()).thenReturn(10);
         ResponseEntity<Integer> result = restApi.getNumberOfNewsAgency();
         Assert.assertEquals(new Integer(10), result.getBody());
     }

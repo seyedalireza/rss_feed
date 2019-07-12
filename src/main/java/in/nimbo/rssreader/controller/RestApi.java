@@ -110,7 +110,7 @@ public class RestApi {
 
         int numberOfNewsagency = 0;
         try {
-            numberOfNewsagency = dbService.getNumberOfNewsagency();
+            numberOfNewsagency = dbService.getNumberOfNewsAgency();
         } catch (Exception e) {
             return new ResponseEntity<>(-1, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -41,15 +41,11 @@ public class QueryBuilder {
             throws SQLException {
         StringBuilder c = new StringBuilder();
         for (int i = 0; i < columnNames.size(); i++) {
-            c.append("?").append(", ");
+            c.append(columnNames.get(i)).append(", ");
         }
         String co = c.substring(0, c.length() - 2);
         String query = "SELECT COUNT(DISTINCT " + co + ") FROM " + tableName + ";";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-        for (int i = 0; i < columnNames.size(); i++) {
-            preparedStatement.setString(i + 1, columnNames.get(i));
-        }
         return preparedStatement;
     }
 
