@@ -68,7 +68,8 @@ public class QueryBuilder {
         for (int i = 0; i < map.size(); i++) {
             if (i == map.size() - 1)
                 queryBuilder.append("?);");
-            queryBuilder.append("?, ");
+            else
+                queryBuilder.append("?, ");
         }
         PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString());
 
