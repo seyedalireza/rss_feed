@@ -47,7 +47,7 @@ public class FeedService {
                 result.add(news);
             }
         } catch (IOException | FeedException e) {
-            log.error("FeedService.getFeeds{}", e);
+            log.error("FeedService.getFeeds()", e);
         }
         return result;
     }
