@@ -75,7 +75,7 @@ public class QueryBuilder {
                 counter++;
             }
         }
-        queryBuilder = new StringBuilder(queryBuilder.substring(0, queryBuilder.length() - 3) + " VALUES (");
+        queryBuilder = new StringBuilder(queryBuilder.substring(0, queryBuilder.length() - 3) + ") VALUES (");
         for (int i = 0; i < map.size(); i++) {
             if (i == map.size() - 1)
                 queryBuilder.append("?);");
