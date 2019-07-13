@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class CrawlerService {
     public static Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b)([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 60 * 60 * 1000)
     public void crawl() {
         log.info("start adding new feeds");
         ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
