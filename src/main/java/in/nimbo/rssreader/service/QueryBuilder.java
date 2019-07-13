@@ -49,6 +49,18 @@ public class QueryBuilder {
         return preparedStatement;
     }
 
+    public PreparedStatement distinctValueQuery(Connection connection, List<String> columnNames, String tableName)
+            throws SQLException {
+        StringBuilder c = new StringBuilder();
+        for (int i = 0; i < columnNames.size(); i++) {
+            c.append(columnNames.get(i)).append(", ");
+        }
+        String co = c.substring(0, c.length() - 2);
+        String query = "SELECT DISTINCT " + co + " FROM " + tableName + ";";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        return preparedStatement;
+    }
+
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
             throws SQLException {// todo test this function
         String count = "INSERT INTO news." + tableName + " (";

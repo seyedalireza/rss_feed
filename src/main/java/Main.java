@@ -14,17 +14,18 @@ public class Main {
     public static final String PASSWORD = "1234";
 
     public static void main(String[] args) throws IOException, FeedException {
-        FeedService feedService = new FeedService();
-        for(int i = 0; i < 500; i++) {
-            String uri = "https://www.khabaronline.ir/rss/tp/" + i;
-            System.out.println(uri);
-            try {
-                List<News> newsList = feedService.getFeeds(uri);
-                DbService dbService = new DbService(new QueryBuilder());
-                dbService.addFeedToPostgres(newsList);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        FeedService feedService = new FeedService();
+//        DbService dbService = new DbService(new QueryBuilder());
+//        dbService.initialConnections();
+//        for(int i = 0; i < 500; i++) {
+//            String uri = "https://www.khabaronline.ir/rss/tp/" + i;
+//            System.out.println(uri);
+//            try {
+//                List<News> newsList = feedService.getFeeds(uri);
+//                dbService.addFeedToPostgres(newsList);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }

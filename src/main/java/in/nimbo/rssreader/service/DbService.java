@@ -5,6 +5,7 @@ import in.nimbo.rssreader.model.RangedSearchParams;
 import in.nimbo.rssreader.model.SearchParams;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.ds.PGPoolingDataSource;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,17 @@ public class DbService {
     @Value("${server-name}")
     public String serverName = "localhost";
     public PGPoolingDataSource source;
+    private static DbService instance;
     private QueryBuilder queryBuilder;
     @Autowired
     public DbService(QueryBuilder queryBuilder) {
         this.queryBuilder = queryBuilder;
+    }
+
+    { instance = this; }
+
+    public static DbService getInstance() {
+        return instance;
     }
 
     @PostConstruct
@@ -70,8 +78,11 @@ public class DbService {
 
                     statement.executeQuery(query);
                     log.info("news add successfully , news: ", news.toString());
+                } catch (PSQLException e) {
+                    log.error("can't add news. news may be exists.");
                 } catch (Exception e) {
                     log.error("DbService.addToPostgres()", e);
+//                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -167,8 +178,29 @@ public class DbService {
         return -1;
     }
 
+    private List<String> getDistinctValuesColumn(String columnName) throws Exception {
+        List<String> result = new ArrayList<>();
+        try (Connection connection = source.getConnection()) {
+            PreparedStatement preparedStatement = queryBuilder.distinctValueQuery(connection, Arrays.asList(columnName), "news.news");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(resultSet.getString(columnName));
+                }
+            }
+        } catch (SQLException e) {
+            log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
+        }
+        return result;
+    }
+
+    public List<String> getRssUrls() throws Exception {
+        return getDistinctValuesColumn("rssurl");
+    }
+
+
     public int getNumberOfNewsAgency() throws Exception {
-        return getDistinctCountOfColumn("newsagency");
+        return getDistinctCountOfColumn("source");
     }
 
     public List rangedSearch(RangedSearchParams rangedSearch) throws Exception {

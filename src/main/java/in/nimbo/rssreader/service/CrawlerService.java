@@ -1,5 +1,6 @@
 package in.nimbo.rssreader.service;
 
+import in.nimbo.rssreader.model.News;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,13 +24,33 @@ import java.util.regex.Pattern;
 public class CrawlerService {
     public static Pattern urlPattern = Pattern.compile("https?:\\/\\/(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b)([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)");
 
-    @Scheduled(fixedRate = 86400000)
+    @Scheduled(fixedRate = 30000)
     public void crawl() {
+        log.info("start adding new feeds");
         ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
-        // todo use queue for uri
-        // for each thread add this queue and then ...
+        FeedService feedService = new FeedService();
+        DbService dbService = DbService.getInstance();
+        try {
+            dbService.getRssUrls().forEach(uri -> queue.add(uri));
+        } catch (Exception e) {
+            log.error("can't connect to database and get rss links.", e);
+        }
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(8);
-        // todo submit tasks (add to data base from rss list)
+        scheduledThreadPoolExecutor.execute(() -> {
+            String uri = queue.remove();
+            log.info("uri: " + uri + " rss added.");
+            List<News> newsList = new ArrayList<>();
+            try {
+                newsList = feedService.getFeeds(uri);
+            } catch (Exception e) {
+                log.error("getting feeds error.", e);
+            }
+            try {
+                dbService.addFeedToPostgres(newsList);
+            } catch (Exception e) {
+                log.error("can't add feed to database", e);
+            }
+        });
     }
 
 
