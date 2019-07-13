@@ -29,7 +29,7 @@ public class CrawlerService {
         // todo use queue for uri
         // for each thread add this queue and then ...
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(8);
-        //todo submit tasks (add to data base from rss list)
+        // todo submit tasks (add to data base from rss list)
     }
 
 

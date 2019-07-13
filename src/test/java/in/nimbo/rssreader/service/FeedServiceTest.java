@@ -28,7 +28,7 @@ public class FeedServiceTest {
     @Test
     public void testGetFeeds() throws Exception {
         List<News> result = feedService.getFeeds("rssUrl");
-        Assert.assertEquals(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")), result);
+        Assert.assertEquals(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl", "hash")), result);
     }
 }
 

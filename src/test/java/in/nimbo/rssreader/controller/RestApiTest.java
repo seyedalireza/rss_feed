@@ -39,7 +39,7 @@ public class RestApiTest {
 
     @Test
     public void testAdd() throws Exception {
-        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
+        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl", "")));
         ResponseEntity<String> result = restApi.add("uri");
         Assert.assertEquals(null, result.getBody());
     }
@@ -74,7 +74,7 @@ public class RestApiTest {
 
     @Test
     public void testGetNumberOfNewsAgency() throws Exception {
-        when(dbService.getNumberOfNewsagency()).thenReturn(10);
+        when(dbService.getNumberOfNewsAgency()).thenReturn(10);
         ResponseEntity<Integer> result = restApi.getNumberOfNewsAgency();
         Assert.assertEquals(new Integer(10), result.getBody());
     }
@@ -88,7 +88,7 @@ public class RestApiTest {
 
     @Test
     public void testCrawl() throws Exception {// todo ali
-        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
+        when(feedService.getFeeds(anyString())).thenReturn(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl", "hash")));
         when(crawler.getRssUrlList(anyString())).thenReturn(Arrays.<String>asList("String"));
 
         ResponseEntity<String> result = restApi.crawl("uri");

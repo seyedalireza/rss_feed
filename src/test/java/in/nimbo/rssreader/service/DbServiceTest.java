@@ -37,7 +37,7 @@ public class DbServiceTest {
 
     @Test
     public void testAddFeedToPostgres() throws Exception {
-        dbService.addFeedToPostgres(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl")));
+        dbService.addFeedToPostgres(Arrays.<News>asList(new News("title", "description", "newsAgency", "category", "date", "source", "rssUrl", "hash")));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DbServiceTest {
     public void testGetNumberOfNewsagency() throws Exception {
         when(queryBuilder.distinctCountQuery(any(), any(), anyString())).thenReturn(null);
 
-        int result = dbService.getNumberOfNewsagency();
+        int result = dbService.getNumberOfNewsAgency();
         Assert.assertEquals(0, result);
     }
 }

@@ -1,4 +1,5 @@
 package in.nimbo.rssreader.service;
+
 import in.nimbo.rssreader.model.News;
 import in.nimbo.rssreader.model.RangedSearchParams;
 import in.nimbo.rssreader.model.SearchParams;
@@ -19,27 +20,29 @@ import java.util.List;
 @Service
 @Slf4j
 public class DbService {
-    @Value("${data-base-name}")
-    public String dataBaseName = "news";
-
-    @Value("${postgres-port}")
-    public String port = "5432";
-
-    @Value("${server-name}")
-    public String serverName = "localhost";
-
     @Value("${spring.datasource.username}")
     public static final String USER = "postgres";
-
     @Value("${spring.datasource.password}")
     public static final String PASSWORD = "1234";
-
+    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\",\"source\",\"rssurl\",\"hash\")\n" +
+            "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')";
+    @Value("${data-base-name}")
+    public String dataBaseName = "news";
+    @Value("${postgres-port}")
+    public String port = "5432";
+    @Value("${server-name}")
+    public String serverName = "localhost";
     public PGPoolingDataSource source;
+    private QueryBuilder queryBuilder;
+    @Autowired
+    public DbService(QueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
+    }
 
     @PostConstruct
     public void initialConnections() {
         source = new PGPoolingDataSource();
-        source.setDataSourceName("dbServie-dataSource");
+        source.setDataSourceName("dbService-dataSource");
         source.setPortNumber(Integer.parseInt(port));
         source.setInitialConnections(5);
         source.setServerName(serverName);
@@ -49,17 +52,7 @@ public class DbService {
         source.setMaxConnections(25);
     }
 
-
-    public static final String insertQuery = "INSERT INTO \"news\".\"news\" (\"title\",\"date\",\"description\",\"newsagency\",\"category\",\"source\",\"rssurl\")\n" +
-            "VALUES ('%s','%s','%s','%s','%s','%s','%s')";
-    private QueryBuilder queryBuilder;
-
-    @Autowired
-    public DbService(QueryBuilder queryBuilder) {
-        this.queryBuilder = queryBuilder;
-    }
-
-    public void addFeedToPostgres(List<News> newsList) throws Exception {
+    public void addFeedToPostgres(List<News> newsList) throws Exception {// todo use executor and thread pool to increase performance
         try (Connection connection = source.getConnection()) {
             Statement statement = connection.createStatement();
             for (News news : newsList) {
@@ -73,7 +66,7 @@ public class DbService {
                     if (title == null) title = "";
                     String category = news.getCategory(); // !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : ""
 
-                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl());
+                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl(), news.getHash());
 
                     statement.executeQuery(query);
                     log.info("news add successfully , news: ", news.toString());
@@ -100,14 +93,30 @@ public class DbService {
         }
     }
 
+    public void insert(List<News> newsList) throws Exception {
+        try (Connection connection = source.getConnection()) {
+            for (News news : newsList) {
+                PreparedStatement preparedStatement = queryBuilder.buildInsertQuery(connection, "news", news);
+                ResultSet result = preparedStatement.executeQuery();
+                // List resultList = parseResult(result, News.class);
+                result.close();
+            }
+
+        } catch (SQLException e) {
+            log.error("DbService.addToPostgres()", e);
+            throw new Exception("internal error");
+        }
+    }
+
+
     public int countSearch(SearchParams params) throws Exception {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.buildCountQuery(connection, params);
-            ResultSet result = preparedStatement.executeQuery();
-            while(result.next()){
-                return result.getInt("count");
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("count");
+                }
             }
-            result.close();
         } catch (Exception e) {
             log.error("DbService.addToPostgres()", e);
             throw new Exception("internal error");
@@ -146,11 +155,11 @@ public class DbService {
     private int getDistinctCountOfColumn(String columnName) throws Exception {
         try (Connection connection = source.getConnection()) {
             PreparedStatement preparedStatement = queryBuilder.distinctCountQuery(connection, Arrays.asList(columnName), "news.news");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
-                return resultSet.getInt("count");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("count");
+                }
             }
-            resultSet.close();
         } catch (SQLException e) {
             log.error("DbService.addToPostgres()", e);
             throw new Exception("internal error");
@@ -158,7 +167,7 @@ public class DbService {
         return -1;
     }
 
-    public int getNumberOfNewsagency() throws Exception {
+    public int getNumberOfNewsAgency() throws Exception {
         return getDistinctCountOfColumn("newsagency");
     }
 

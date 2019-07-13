@@ -41,21 +41,17 @@ public class QueryBuilder {
             throws SQLException {
         StringBuilder c = new StringBuilder();
         for (int i = 0; i < columnNames.size(); i++) {
-            c.append("?").append(", ");
+            c.append(columnNames.get(i)).append(", ");
         }
         String co = c.substring(0, c.length() - 2);
         String query = "SELECT COUNT(DISTINCT " + co + ") FROM " + tableName + ";";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-        for (int i = 0; i < columnNames.size(); i++) {
-            preparedStatement.setString(i + 1, columnNames.get(i));
-        }
         return preparedStatement;
     }
 
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
-            throws SQLException {//todo test this function
-        String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
+            throws SQLException {// todo test this function
+        String count = "INSERT INTO news." + tableName + " (";
         StringBuilder queryBuilder = new StringBuilder(count);
         HashMap<Integer, String> map = new HashMap<>();
         int counter = 1;
@@ -68,11 +64,12 @@ public class QueryBuilder {
                 counter++;
             }
         }
-        queryBuilder = new StringBuilder(queryBuilder.substring(0, queryBuilder.length() - 3) + " VALUES (");
+        queryBuilder = new StringBuilder(queryBuilder.toString().substring(0, queryBuilder.toString().length() - 3) + ") VALUES (");
         for (int i = 0; i < map.size(); i++) {
             if (i == map.size() - 1)
                 queryBuilder.append("?);");
-            queryBuilder.append("?, ");
+            else
+                queryBuilder.append("?, ");
         }
         PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString());
 

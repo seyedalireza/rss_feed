@@ -40,7 +40,6 @@ public class RestApi {
         } catch (Exception e) {
             log.error("Api.add():  uri =" + uri, e);
             return new ResponseEntity<String>("internal error", HttpStatus.INTERNAL_SERVER_ERROR);
-
         }
         return new ResponseEntity<String>(HttpStatus.OK);
     }
@@ -110,7 +109,7 @@ public class RestApi {
 
         int numberOfNewsagency = 0;
         try {
-            numberOfNewsagency = dbService.getNumberOfNewsagency();
+            numberOfNewsagency = dbService.getNumberOfNewsAgency();
         } catch (Exception e) {
             return new ResponseEntity<>(-1, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -139,10 +138,9 @@ public class RestApi {
         List<String> rssUrlList = crawler.getRssUrlList(uri);
         for (String rssUrl : rssUrlList) {
             try {
-                List<News> newsList = feedService.getFeeds(rssUrl);
-                dbService.addFeedToPostgres(newsList);
+                add(rssUrl);
             } catch (Exception e) {
-                log.error("Api.add(): ", e);
+                log.error("Getting rss error: " + uri, e);
             }
         }
         log.info("crawl request finished with uri: " + uri);

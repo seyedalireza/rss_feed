@@ -43,7 +43,9 @@ public class FeedService {
                 DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
                 String strDate = dateFormat.format(entry.getPublishedDate());
                 String category = !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : "";
-                News news = new News(title, description, newsAgency, category, strDate, siteUrl, rssUrl);
+
+                News news = new News(title, description, newsAgency, category, strDate, siteUrl, rssUrl, "");
+                news.getHash();
                 result.add(news);
             }
         } catch (IOException | FeedException e) {
