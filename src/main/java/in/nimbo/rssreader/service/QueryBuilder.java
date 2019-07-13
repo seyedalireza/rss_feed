@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -62,8 +61,8 @@ public class QueryBuilder {
     }
 
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
-            throws SQLException {// todo test this function
-        String count = "INSERT INTO news." + tableName + " (";
+            throws SQLException {
+        String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
         StringBuilder queryBuilder = new StringBuilder(count);
         HashMap<Integer, String> map = new HashMap<>();
         int counter = 1;
@@ -76,7 +75,7 @@ public class QueryBuilder {
                 counter++;
             }
         }
-        queryBuilder = new StringBuilder(queryBuilder.toString().substring(0, queryBuilder.toString().length() - 3) + ") VALUES (");
+        queryBuilder = new StringBuilder(queryBuilder.substring(0, queryBuilder.length() - 3) + " VALUES (");
         for (int i = 0; i < map.size(); i++) {
             if (i == map.size() - 1)
                 queryBuilder.append("?);");

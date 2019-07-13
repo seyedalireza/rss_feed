@@ -48,9 +48,17 @@ public class DbService {
     }
 
     @PostConstruct
-    public void initialConnections() {
+    public void initialConnections() throws SQLException {
+        createConnectionPool("dbservice0");
+    }
+
+    public void createConnectionPool(String sourceName) throws SQLException {
+        if (source != null) {
+            source.close();
+            source = null;
+        }
         source = new PGPoolingDataSource();
-        source.setDataSourceName("dbService-dataSource");
+        source.setDataSourceName(sourceName);
         source.setPortNumber(Integer.parseInt(port));
         source.setInitialConnections(5);
         source.setServerName(serverName);
@@ -58,6 +66,12 @@ public class DbService {
         source.setUser(USER);
         source.setPassword(PASSWORD);
         source.setMaxConnections(25);
+        source.getConnection();
+    }
+
+
+    public void closeConnections() {
+        source.close();
     }
 
     public void addFeedToPostgres(List<News> newsList) throws Exception {// todo use executor and thread pool to increase performance
