@@ -62,7 +62,7 @@ public class QueryBuilder {
 
     public PreparedStatement buildInsertQuery(Connection connection, String tableName, Object instance)
             throws SQLException {
-        String count = "INSERT INTO \"news\".\"" + tableName + "\"(";
+        String count = "INSERT INTO news." + tableName + " (";
         StringBuilder queryBuilder = new StringBuilder(count);
         HashMap<Integer, String> map = new HashMap<>();
         int counter = 1;
