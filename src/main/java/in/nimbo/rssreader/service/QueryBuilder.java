@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -85,7 +86,10 @@ public class QueryBuilder {
         PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString());
 
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            preparedStatement.setString(entry.getKey(), entry.getValue());
+            if (entry.getValue().matches("(\\d+)-(\\d+)-(\\d+)"))
+                preparedStatement.setDate(entry.getKey(), Date.valueOf(entry.getValue()));
+            else
+                preparedStatement.setString(entry.getKey(), entry.getValue());
         }
         return preparedStatement;
     }

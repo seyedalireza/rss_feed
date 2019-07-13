@@ -76,7 +76,7 @@ public class DbService {
 
     public void addFeedToPostgres(List<News> newsList) throws Exception {// todo use executor and thread pool to increase performance
         try (Connection connection = source.getConnection()) {
-            Statement statement = connection.createStatement();
+//            Statement statement = connection.createStatement();
             for (News news : newsList) {
                 try {
                     String title = news.getTitle();
@@ -88,12 +88,20 @@ public class DbService {
                     if (title == null) title = "";
                     String category = news.getCategory(); // !entry.getCategories().isEmpty() ? entry.getCategories().get(0).getName() : ""
 
-                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl(), news.getHash());
+//                    String query = String.format(insertQuery, title, news.getDate(), description, newsAgency, category, news.getSource(), news.getRssUrl(), news.getHash());
+//
+//                    statement.executeQuery(query);
 
-                    statement.executeQuery(query);
+
+                    PreparedStatement newsQuery = queryBuilder.buildInsertQuery(connection, "news", news);
+                    newsQuery.executeQuery();
+
+
+
                     log.info("news add successfully , news: ", news.toString());
                 } catch (PSQLException e) {
-                    log.error("can't add news. news may be exists.");
+                    if(!e.getMessage().contains("duplicate"))
+                        log.error("can't add news. news may be exists.", e);
                 } catch (Exception e) {
                     log.error("DbService.addToPostgres()", e);
 //                    e.printStackTrace();
