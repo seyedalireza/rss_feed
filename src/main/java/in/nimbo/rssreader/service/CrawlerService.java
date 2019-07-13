@@ -35,22 +35,26 @@ public class CrawlerService {
         } catch (Exception e) {
             log.error("can't connect to database and get rss links.", e);
         }
+
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(8);
-        scheduledThreadPoolExecutor.execute(() -> {
-            String uri = queue.remove();
-            log.info("uri: " + uri + " rss added.");
-            List<News> newsList = new ArrayList<>();
-            try {
-                newsList = feedService.getFeeds(uri);
-            } catch (Exception e) {
-                log.error("getting feeds error.", e);
-            }
-            try {
-                dbService.addFeedToPostgres(newsList);
-            } catch (Exception e) {
-                log.error("can't add feed to database", e);
-            }
-        });
+        for (int i = 0; i < 8; i++)
+            scheduledThreadPoolExecutor.submit(() -> {
+                while (!queue.isEmpty()) {
+                    String uri = queue.remove();
+                    log.info("uri: " + uri + " rss added.");
+                    List<News> newsList = new ArrayList<>();
+                    try {
+                        newsList = feedService.getFeeds(uri);
+                    } catch (Exception e) {
+                        log.error("getting feeds error.", e);
+                    }
+                    try {
+                        dbService.addFeedToPostgres(newsList);
+                    } catch (Exception e) {
+                        log.error("can't add feed to database", e);
+                    }
+                }
+            });
     }
 
 
