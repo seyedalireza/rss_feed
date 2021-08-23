@@ -15,7 +15,7 @@
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
         <springboot.version>2.1.6.RELEASE</springboot.version>
         <lombok.version>1.18.8</lombok.version>
-        <jsoup.version>1.11.3</jsoup.version>
+        <jsoup.version>1.14.2</jsoup.version>
         <postgresql-embedded.version>2.10</postgresql-embedded.version>
         <swagger.version>2.9.2</swagger.version>
     </properties>
