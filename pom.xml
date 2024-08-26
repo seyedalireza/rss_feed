@@ -17,7 +17,7 @@
         <lombok.version>1.18.8</lombok.version>
         <jsoup.version>1.11.3</jsoup.version>
         <postgresql-embedded.version>2.10</postgresql-embedded.version>
-        <swagger.version>2.9.2</swagger.version>
+        <swagger.version>2.10.0</swagger.version>
     </properties>
 
 
